@@ -32,6 +32,14 @@
       #overlay.show {
         display: block;
       }
+      /* Prevent logo from going below the menu button on mobile */
+      .flex.justify-between.items-center.mb-4.flex-wrap.gap-3 {
+        flex-wrap: nowrap;
+        gap: 0.5rem; /* smaller gap */
+      }
+      .flex.justify-between.items-center.mb-4.flex-wrap.gap-3 > img.h-10 {
+        margin-left: 2rem; /* move logo slightly right to avoid overlap with fixed button */
+      }
     }
   </style>
  </head>
