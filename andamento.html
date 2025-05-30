@@ -198,7 +198,7 @@
       setTimeout(() => popup.remove(), 5000);
     }
 
-    const aparelhosRef = database.ref('aparelhos');
+    const aparelhosRef = database.ref('entrada');
     const cardsContainer = document.getElementById('cardsContainer');
 
     aparelhosRef.on('value', (snapshot) => {
@@ -228,7 +228,7 @@
           statusSelect.addEventListener('change', (event) => {
             const newStatus = event.target.value;
             const aparelhoId = event.target.getAttribute('data-id');
-            const aparelhoRef = database.ref('aparelhos/' + aparelhoId);
+            const aparelhoRef = database.ref('entrada/' + aparelhoId);
             const saidasRef = database.ref('saidas');
 
             if (newStatus === 'finalizado') {
@@ -283,7 +283,7 @@
               confirmBtn.addEventListener('click', onConfirm);
               cancelBtn.addEventListener('click', onCancel);
             } else {
-              // Update status in 'aparelhos'
+              // Update status in 'entrada'
               aparelhoRef.update({ status: newStatus });
             }
           });
