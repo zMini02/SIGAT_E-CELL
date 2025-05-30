@@ -183,36 +183,51 @@
       }
     });
 
-    const aparelhosRef = database.ref('aparelhos');
-    aparelhosRef.on('value', (snapshot) => {
-      const aparelhos = snapshot.val();
-      let emAndamentoCount = 0, pendentesCount = 0;
-      const aguardandoContainer = document.getElementById('aguardandoConserto');
-      aguardandoContainer.innerHTML = '';
+      const aparelhosRef = database.ref('aparelhos');
+      const entradaRef = database.ref('entrada');
+      aparelhosRef.on('value', (snapshot) => {
+        const aparelhos = snapshot.val();
+        let emAndamentoCount = 0, pendentesCount = 0;
+        const aguardandoContainer = document.getElementById('aguardandoConserto');
+        aguardandoContainer.innerHTML = '';
 
-      if (aparelhos) {
-        Object.values(aparelhos).forEach((a) => {
-          const status = a.status?.toLowerCase();
-          if (status === 'em andamento') emAndamentoCount++;
-          if (status === 'aguardando conserto') {
-            pendentesCount++;
-            const card = document.createElement('div');
-            card.className = 'bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 min-w-[250px]';
-            card.innerHTML = `
-              <h3 class="text-yellow-500 text-xl font-bold">${a.nome || 'Aparelho'}</h3>
-              <p class="text-yellow-700">Modelo: ${a.modelo || 'Desconhecido'}</p>
-              <p class="text-yellow-700">Cliente: ${a.cliente || 'Desconhecido'}</p>
-              <p class="text-yellow-700">Problema: ${a.problema || 'Desconhecido'}</p>
-              <p class="text-yellow-700">Status: ${a.status}</p>
-            `;
-            aguardandoContainer.appendChild(card);
+        if (aparelhos) {
+          Object.values(aparelhos).forEach((a) => {
+            const status = a.status?.toLowerCase();
+            if (status === 'em andamento') emAndamentoCount++;
+            if (status === 'aguardando conserto') {
+              pendentesCount++;
+              const card = document.createElement('div');
+              card.className = 'bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 min-w-[250px]';
+              card.innerHTML = `
+                <h3 class="text-yellow-500 text-xl font-bold">${a.nome || 'Aparelho'}</h3>
+                <p class="text-yellow-700">Modelo: ${a.modelo || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Cliente: ${a.cliente || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Problema: ${a.problema || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Status: ${a.status}</p>
+              `;
+              aguardandoContainer.appendChild(card);
+            }
+          });
+        }
+
+        // Now fetch entrada data and add to pendentesCount
+        entradaRef.once('value').then((entradaSnapshot) => {
+          const entradas = entradaSnapshot.val();
+          let entradaPendentesCount = 0;
+          if (entradas) {
+            Object.values(entradas).forEach((e) => {
+              const status = e.status?.toLowerCase();
+              if (status === 'aguardando conserto') {
+                entradaPendentesCount++;
+              }
+            });
           }
+          const totalPendentes = pendentesCount + entradaPendentesCount;
+          document.getElementById('emAndamentoCount').textContent = emAndamentoCount;
+          document.getElementById('pendentesCount').textContent = totalPendentes;
         });
-      }
-
-      document.getElementById('emAndamentoCount').textContent = emAndamentoCount;
-      document.getElementById('pendentesCount').textContent = pendentesCount;
-    });
+      });
 
     // Sidebar toggle functionality
     const menuToggle = document.getElementById('menuToggle');
