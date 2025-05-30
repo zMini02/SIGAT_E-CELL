@@ -185,7 +185,7 @@
 
       const aparelhosRef = database.ref('aparelhos');
       const entradaRef = database.ref('entrada');
-      aparelhosRef.on('value', (snapshot) => {
+      aparelhosRef.on('value', async (snapshot) => {
         const aparelhos = snapshot.val();
         let emAndamentoCount = 0, pendentesCount = 0;
         const aguardandoContainer = document.getElementById('aguardandoConserto');
@@ -211,46 +211,35 @@
           });
         }
 
-        // Also add cards for entrada with status aguardando conserto
-        entradaRef.once('value').then((entradaSnapshot) => {
-          const entradas = entradaSnapshot.val();
-          let entradaPendentesCount = 0;
-          if (entradas) {
-            Object.values(entradas).forEach((e) => {
-              const status = e.status?.toLowerCase();
-              if (status === 'aguardando conserto') {
-                entradaPendentesCount++;
-                const card = document.createElement('div');
-                card.className = 'bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 min-w-[250px]';
-                card.innerHTML = `
-                  <h3 class="text-yellow-500 text-xl font-bold">${e.nome || 'Aparelho'}</h3>
-                  <p class="text-yellow-700">Modelo: ${e.modelo || 'Desconhecido'}</p>
-                  <p class="text-yellow-700">Cliente: ${e.cliente || 'Desconhecido'}</p>
-                  <p class="text-yellow-700">Problema: ${e.problema || 'Desconhecido'}</p>
-                  <p class="text-yellow-700">Status: ${e.status}</p>
-                `;
-                aguardandoContainer.appendChild(card);
-              }
-            });
-          }
-        });
+        // Fetch entrada data once and process all statuses
+        const entradaSnapshot = await entradaRef.once('value');
+        const entradas = entradaSnapshot.val();
+        let entradaPendentesCount = 0;
+        if (entradas) {
+          Object.values(entradas).forEach((e) => {
+            const status = e.status?.toLowerCase();
+            if (status === 'em andamento') {
+              emAndamentoCount++;
+            }
+            if (status === 'aguardando conserto') {
+              entradaPendentesCount++;
+              const card = document.createElement('div');
+              card.className = 'bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 min-w-[250px]';
+              card.innerHTML = `
+                <h3 class="text-yellow-500 text-xl font-bold">${e.nome || 'Aparelho'}</h3>
+                <p class="text-yellow-700">Modelo: ${e.modelo || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Cliente: ${e.cliente || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Problema: ${e.problema || 'Desconhecido'}</p>
+                <p class="text-yellow-700">Status: ${e.status}</p>
+              `;
+              aguardandoContainer.appendChild(card);
+            }
+          });
+        }
 
-        // Now fetch entrada data and add to pendentesCount
-        entradaRef.once('value').then((entradaSnapshot) => {
-          const entradas = entradaSnapshot.val();
-          let entradaPendentesCount = 0;
-          if (entradas) {
-            Object.values(entradas).forEach((e) => {
-              const status = e.status?.toLowerCase();
-              if (status === 'aguardando conserto') {
-                entradaPendentesCount++;
-              }
-            });
-          }
-          const totalPendentes = pendentesCount + entradaPendentesCount;
-          document.getElementById('emAndamentoCount').textContent = emAndamentoCount;
-          document.getElementById('pendentesCount').textContent = totalPendentes;
-        });
+        const totalPendentes = pendentesCount + entradaPendentesCount;
+        document.getElementById('emAndamentoCount').textContent = emAndamentoCount;
+        document.getElementById('pendentesCount').textContent = totalPendentes;
       });
 
     // Sidebar toggle functionality
