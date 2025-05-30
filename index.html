@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <style>
     * {
@@ -13,7 +13,7 @@
     }
 
     body {
-      background-color: #ffffff; /* Fundo branco */
+      background-color: #3b82f6; /* Azul padrão */
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -21,7 +21,7 @@
     }
 
     .container {
-      background-color: #3b82f6; /* Azul no card */
+      background-color: #3b82f6;
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -76,6 +76,13 @@
 
     .btn:hover {
       background-color: #e6e6e6;
+    }
+
+    /* Estilo especial para telas pequenas (até 600px) */
+    @media (max-width: 600px) {
+      body {
+        background-color: #ffffff; /* Fundo branco em telas pequenas */
+      }
     }
   </style>
 </head>
