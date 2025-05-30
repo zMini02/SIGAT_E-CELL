@@ -134,12 +134,12 @@
 
     <!-- Main Content -->
     <div id="mainContent" class="flex-1 p-4 md:ml-64">
-      <div class="flex justify-between items-center mb-4">
-        <div class="flex flex-col items-start">
-          <img alt="Logo" class="h-10" src="logoprincipal.png"/>
-
-        </div>
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center mb-4 justify-center relative">
+        <button id="menuToggle" class="md:hidden text-blue-500 focus:outline-none absolute left-0">
+          <i class="fas fa-bars text-3xl"></i>
+        </button>
+        <img alt="Logo" class="h-10 mx-auto" src="logoprincipal.png"/>
+        <div class="relative flex items-center space-x-4 absolute right-0">
           <i class="fas fa-bell text-blue-500 text-2xl"></i>
           <div id="userMenu" class="relative cursor-pointer">
             <i class="fas fa-user-circle text-blue-500 text-2xl"></i>
