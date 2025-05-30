@@ -235,6 +235,7 @@
         <p><span class="font-semibold">Cliente:</span> ${data.cliente}</p>
         <p><span class="font-semibold">Data/Hora:</span> ${new Date(data.dataHora).toLocaleString()}</p>
         <p><span class="font-semibold">Responsável:</span> ${data.responsavelEntrada}</p>
+        <p><span class="font-semibold">Status:</span> ${data.status || "N/A"}</p>
       `;
 
       // Ao clicar no card, abre modal de saída preenchido
@@ -280,7 +281,7 @@
       entradaForm.reset();
     });
 
-    entradaForm.addEventListener("submit", (e) => {
+      entradaForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
       const novaEntrada = {
@@ -289,6 +290,7 @@
         cliente: entradaForm.cliente.value,
         responsavelEntrada: entradaForm.responsavelEntrada.value,
         dataHora: entradaForm.dataHora.value,
+        status: "aguardando concerto"
       };
 
       entradaRef.push(novaEntrada)
