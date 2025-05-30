@@ -11,12 +11,20 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
  </head>
- <body class="bg-white min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
   <div class="flex flex-1">
+    <!-- Sidebar toggle button for small screens -->
+    <button id="sidebarToggle" class="md:hidden absolute top-4 left-4 z-50 p-2 rounded-md bg-blue-500 text-white focus:outline-none">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
     <!-- Sidebar -->
-    <div id="sidebar" class="w-full md:w-1/6 bg-blue-500 p-4 flex flex-col">
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-blue-500 p-4 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40">
       <h2 class="text-white text-xl font-semibold mb-6 border-b border-blue-400 pb-2">Menu Principal</h2>
-      <nav class="flex flex-col space-y-3 flex-grow">
+      <nav class="flex flex-col space-y-3 flex-grow overflow-y-auto">
         <a href="paginaprincipal.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
           <i class="fas fa-home text-lg mr-3"></i>
           <span>Tela Inicial</span>
@@ -65,8 +73,9 @@
       </nav>
     </div>
     <!-- Main Content -->
-    <div class="w-full md:w-5/6 p-4">
+    <div id="mainContent" class="flex-1 p-4 md:ml-64">
       <div class="flex justify-between items-center mb-4">
+        <div style="width: 64px;"></div>
         <img alt="Logo" class="h-10" src="logoprincipal.png"/>
         <div class="relative flex items-center space-x-4">
           <i class="fas fa-bell text-blue-500 text-2xl"></i>
@@ -75,9 +84,26 @@
             <div id="userSubmenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
               <a href="usuarios.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Editar Perfil</a>
               <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Chamar Suporte</a>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle script
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    sidebarToggle.addEventListener('click', () => {
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        mainContent.classList.add('md:ml-64');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        mainContent.classList.remove('md:ml-64');
+      }
+    });
+  </script>
       </div>
 
       <!-- Cards container -->
@@ -136,14 +162,14 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCKhQrR6kZPz-oB-sot2vj8NJ_OGIOgUeA",
-      authDomain: "assistenciapdv.firebaseapp.com",
+      apiKey: "AIzaSyDtjLXUzzkqrbaTEpnp3V3E9-TieWpfUbI",
+      authDomain: "e-celldb.firebaseapp.com",
       databaseURL: "https://e-celldb-default-rtdb.firebaseio.com",
-      projectId: "assistenciapdv",
-      storageBucket: "assistenciapdv.appspot.com",
-      messagingSenderId: "985692408631",
-      appId: "1:985692408631:web:10f57a14d5d09c328ee8b2",
-      measurementId: "G-NB81FZ7825"
+      projectId: "e-celldb",
+      storageBucket: "e-celldb.firebasestorage.app",
+      messagingSenderId: "688765189903",
+      appId: "1:688765189903:web:ad9823502230d7717c487a",
+      measurementId: "G-1QM85D48BH"
     };
 
     const app = firebase.initializeApp(firebaseConfig);
@@ -163,10 +189,19 @@
       }
     });
 
-    const entradaRef = database.ref('entrada');
+    function showPopup(modelo) {
+      const popup = document.createElement('div');
+      popup.className = 'fixed top-16 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-2';
+      popup.innerHTML = `<i class="fas fa-info-circle text-xl"></i><span>Nova saída registrada: ${modelo}</span>`;
+      document.body.appendChild(popup);
+      document.getElementById('notificationSound').play();
+      setTimeout(() => popup.remove(), 5000);
+    }
+
+    const aparelhosRef = database.ref('entrada');
     const cardsContainer = document.getElementById('cardsContainer');
 
-    entradaRef.on('value', (snapshot) => {
+    aparelhosRef.on('value', (snapshot) => {
       const aparelhos = snapshot.val();
       cardsContainer.innerHTML = '';
 
@@ -206,12 +241,15 @@
               // Show aparelho details in modal
               aparelhoRef.once('value').then(snapshot => {
                 const aparelhoData = snapshot.val();
+                const now = new Date();
+                const formattedDateTime = now.toLocaleString('pt-BR', { hour12: false });
                 finalizarDetails.innerHTML = `
                   <p><strong>Cliente:</strong> ${aparelhoData.cliente || ''}</p>
-                  <p><strong>Data/Hora:</strong> ${aparelhoData.dataHora || ''}</p>
+                  <p><strong>Data/Hora Entrada:</strong> ${aparelhoData.dataHora || ''}</p>
                   <p><strong>Modelo:</strong> ${aparelhoData.modelo || ''}</p>
                   <p><strong>Problema:</strong> ${aparelhoData.problema || ''}</p>
                   <p><strong>Responsável Entrada:</strong> ${aparelhoData.responsavelEntrada || ''}</p>
+                  <p><strong>Hora de Saída:</strong> ${formattedDateTime}</p>
                 `;
               });
 
@@ -344,12 +382,15 @@
               currentAparelhoRef.once('value').then(snapshot => {
                 currentAparelhoData = snapshot.val();
                 const finalizarDetails = document.getElementById('finalizarDetails');
+                const now = new Date();
+                const formattedDateTime = now.toLocaleString('pt-BR', { hour12: false });
                 finalizarDetails.innerHTML = `
                   <p><strong>Cliente:</strong> ${currentAparelhoData.cliente || ''}</p>
-                  <p><strong>Data/Hora:</strong> ${currentAparelhoData.dataHora || ''}</p>
+                  <p><strong>Data/Hora Entrada:</strong> ${currentAparelhoData.dataHora || ''}</p>
                   <p><strong>Modelo:</strong> ${currentAparelhoData.modelo || ''}</p>
                   <p><strong>Problema:</strong> ${currentAparelhoData.problema || ''}</p>
                   <p><strong>Responsável Entrada:</strong> ${currentAparelhoData.responsavelEntrada || ''}</p>
+                  <p><strong>Hora de Saída:</strong> ${formattedDateTime}</p>
                 `;
               });
             } else {
