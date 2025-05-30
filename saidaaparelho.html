@@ -1,0 +1,348 @@
+<html lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="favicongrow.png" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+ </head>
+ <body class="bg-white">
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Sidebar -->
+<div id="sidebar" class="w-full md:w-1/6 bg-blue-500 p-4 flex flex-col min-h-screen">
+      <h2 class="text-white text-xl font-semibold mb-6 border-b border-blue-400 pb-2">Menu Principal</h2>
+      <nav class="flex flex-col space-y-3 flex-grow">
+        <a href="paginaprincipal.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-home text-lg mr-3"></i>
+          <span>Tela Inicial</span>
+        </a>
+        <a href="saidaaparelho.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-sign-in-alt text-lg mr-3"></i>
+          <span>Entrada de celular</span>
+        </a>
+        <a href="andamento.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-tasks text-lg mr-3"></i>
+          <span>Andamento</span>
+        </a>
+        <a href="ordemservico.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-file-alt text-lg mr-3"></i>
+          <span>Criar Ordem de Serviço</span>
+        </a>
+        <a href="orcamento.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-calculator text-lg mr-3"></i>
+          <span>Criar Orçamento</span>
+        </a>
+        <a href="usuarios.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-users text-lg mr-3"></i>
+          <span>Usuários</span>
+        </a>
+        <a href="dadosempresa.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-building text-lg mr-3"></i>
+          <span>Cadastrar Empresa</span>
+        </a>
+        <a href="garantia.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-shield-alt text-lg mr-3"></i>
+          <span>Gerar Garantia</span>
+        </a>
+        <a href="estoque.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-cog text-lg mr-3"></i>
+          <span>Estoque de peças</span>
+        </a>
+        <div class="border-t border-blue-400 my-4"></div>
+        <a href="historicodesaidas.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-history text-lg mr-3"></i>
+          <span>Históricos de Saída</span>
+        </a>
+        <a href="index.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-sign-out-alt text-lg mr-3"></i>
+          <span>Sair</span>
+        </a>
+      </nav>
+    </div>
+   <!-- Main Content -->
+   <div class="w-full md:w-5/6 p-4">
+    <div class="flex justify-between items-center mb-4">
+      <img alt="Logo" class="h-10" src="logoprincipal.png"/>
+     <div class="flex items-center space-x-4">
+      <i class="fas fa-bell text-blue-500 text-2xl"></i>
+      <div id="userMenu" class="relative cursor-pointer">
+        <i class="fas fa-user-circle text-blue-500 text-2xl"></i>
+        <div id="userSubmenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-50">
+          <a href="usuarios.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Editar Perfil</a>
+          <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Chamar Suporte</a>
+        </div>
+      </div>
+     </div>
+    </div>
+
+    <!-- Botão para abrir modal de entrada -->
+    <div class="mb-4">
+      <button id="openEntradaModalBtn" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition">
+        <i class="fas fa-sign-in-alt"></i> Cadastrar Entrada
+      </button>
+    </div>
+
+    <!-- Cards container -->
+    <div id="cardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
+
+    <!-- Modal de Registrar Entrada -->
+    <div id="entradaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+     <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <h2 class="text-green-500 text-xl font-bold mb-4">Cadastrar Entrada</h2>
+      <form id="entradaForm" class="space-y-4">
+       <div>
+        <label for="modelo" class="block font-semibold mb-1">Modelo:</label>
+        <input type="text" id="modelo" name="modelo" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div>
+        <label for="problema" class="block font-semibold mb-1">Problema:</label>
+        <textarea id="problema" name="problema" class="w-full border border-gray-300 rounded-md p-2" rows="3" required></textarea>
+       </div>
+       <div>
+        <label for="cliente" class="block font-semibold mb-1">Cliente:</label>
+        <input type="text" id="cliente" name="cliente" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div>
+        <label for="responsavelEntrada" class="block font-semibold mb-1">Responsável pelo Conserto:</label>
+        <input type="text" id="responsavelEntrada" name="responsavelEntrada" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div>
+        <label for="dataHora" class="block font-semibold mb-1">Data e Hora:</label>
+        <input type="datetime-local" id="dataHora" name="dataHora" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div class="flex justify-end space-x-2">
+        <button type="button" id="closeEntradaModalBtn" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition">Cancelar</button>
+        <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition">Cadastrar</button>
+       </div>
+      </form>
+     </div>
+    </div>
+    
+    <!-- Modal de Registrar Saída -->
+    <div id="saidaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+     <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <h2 class="text-blue-500 text-xl font-bold mb-4">Registrar Saída</h2>
+      <form id="saidaForm" class="space-y-4">
+       <div>
+        <label for="pecas" class="block font-semibold mb-1">Peças Utilizadas:</label>
+        <textarea id="pecas" name="pecas" class="w-full border border-gray-300 rounded-md p-2" rows="3" required></textarea>
+       </div>
+       <div>
+        <label for="conserto" class="block font-semibold mb-1">Conserto Feito:</label>
+        <textarea id="conserto" name="conserto" class="w-full border border-gray-300 rounded-md p-2" rows="3" required></textarea>
+       </div>
+       <div>
+        <label for="anotacoes" class="block font-semibold mb-1">Anotações:</label>
+        <textarea id="anotacoes" name="anotacoes" class="w-full border border-gray-300 rounded-md p-2"></textarea>
+       </div>
+       <div>
+        <label for="responsavelSaida" class="block font-semibold mb-1">Responsável pelo Conserto:</label>
+        <input type="text" id="responsavelSaida" name="responsavelSaida" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div>
+        <label for="dataHoraSaida" class="block font-semibold mb-1">Data e Hora:</label>
+        <input type="datetime-local" id="dataHoraSaida" name="dataHoraSaida" class="w-full border border-gray-300 rounded-md p-2" required />
+       </div>
+       <div class="flex justify-end space-x-2">
+        <button type="button" id="closeSaidaModalBtn" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition">Cancelar</button>
+        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition">Registrar</button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <!-- Firebase Realtime Database -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtjLXUzzkqrbaTEpnp3V3E9-TieWpfUbI",
+      authDomain: "e-celldb.firebaseapp.com",
+      databaseURL: "https://e-celldb-default-rtdb.firebaseio.com",
+      projectId: "e-celldb",
+      storageBucket: "e-celldb.firebasestorage.app",
+      messagingSenderId: "688765189903",
+      appId: "688765189903:web:ad9823502230d7717c487a",
+      measurementId: "G-1QM85D48BH"
+    };
+  
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  
+    // References
+    const aparelhosRef = database.ref('aparelhos');
+    const saidasRef = database.ref('saidas');
+    const cardsContainer = document.getElementById('cardsContainer');
+    const saidaModal = document.getElementById('saidaModal');
+    const closeSaidaModalBtn = document.getElementById('closeSaidaModalBtn');
+    const saidaForm = document.getElementById('saidaForm');
+    let currentKey = null;
+  
+    // Abrir modal de saída
+    function openSaidaModal(key) {
+      currentKey = key;
+      saidaModal.classList.remove('hidden');
+    }
+  
+    // Fechar modal de saída
+    closeSaidaModalBtn.addEventListener('click', () => {
+      saidaModal.classList.add('hidden');
+      currentKey = null;
+    });
+  
+    // Registrar saída no banco de dados
+    saidaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+  
+      const pecas = document.getElementById('pecas').value;
+      const conserto = document.getElementById('conserto').value;
+      const anotacoes = document.getElementById('anotacoes').value;
+      const responsavelSaida = document.getElementById('responsavelSaida').value;
+      const dataHoraSaida = document.getElementById('dataHoraSaida').value;
+  
+      const saidaData = {
+        pecas,
+        conserto,
+        anotacoes,
+        responsavelSaida,
+        dataHoraSaida
+      };
+  
+      if (currentKey) {
+        // Obter os dados do aparelho atual
+        aparelhosRef.child(currentKey).once('value', (snapshot) => {
+          const aparelhoData = snapshot.val();
+  
+          // Enviar os dados para o banco de saídas
+          saidasRef.push({ ...aparelhoData, ...saidaData })
+            .then(() => {
+              // Excluir o registro do banco de aparelhos
+              return aparelhosRef.child(currentKey).remove();
+            })
+            .then(() => {
+              alert('Saída registrada com sucesso!');
+              saidaForm.reset();
+              saidaModal.classList.add('hidden');
+              currentKey = null;
+            })
+            .catch((error) => {
+              alert('Erro ao registrar saída: ' + error.message);
+            });
+        });
+      }
+    });
+  
+    // Exibir cards dinâmicos
+    aparelhosRef.on('value', (snapshot) => {
+      cardsContainer.innerHTML = '';
+      const aparelhos = snapshot.val();
+      if (aparelhos) {
+        Object.entries(aparelhos).forEach(([key, aparelho]) => {
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-lg shadow p-4 border border-gray-200';
+  
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold mb-2">${aparelho.modelo || 'Modelo não informado'}</h3>
+            <p><strong>Problema:</strong> ${aparelho.problema || 'Não informado'}</p>
+            <p><strong>Cliente:</strong> ${aparelho.cliente || 'Não informado'}</p>
+            <p><strong>Data e Hora:</strong> ${aparelho.dataHora || 'Não informado'}</p>
+          `;
+          cardsContainer.appendChild(card);
+        });
+      }
+    });
+
+    // Abrir modal de entrada
+    const entradaModal = document.getElementById('entradaModal');
+    const openEntradaModalBtn = document.getElementById('openEntradaModalBtn');
+    const closeEntradaModalBtn = document.getElementById('closeEntradaModalBtn');
+    const entradaForm = document.getElementById('entradaForm');
+
+    openEntradaModalBtn.addEventListener('click', () => {
+      entradaModal.classList.remove('hidden');
+    });
+
+    closeEntradaModalBtn.addEventListener('click', () => {
+      entradaModal.classList.add('hidden');
+      entradaForm.reset();
+    });
+
+    // Registrar entrada no banco de dados
+    entradaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const modelo = document.getElementById('modelo').value;
+      const problema = document.getElementById('problema').value;
+      const cliente = document.getElementById('cliente').value;
+      const responsavelEntrada = document.getElementById('responsavelEntrada').value;
+      const dataHora = document.getElementById('dataHora').value;
+
+      const entradaData = {
+        modelo,
+        problema,
+        cliente,
+        responsavelEntrada,
+        dataHora
+      };
+
+      // Salvar os dados no banco de dados
+      aparelhosRef.push(entradaData)
+        .then(() => {
+          alert('Entrada cadastrada com sucesso!');
+          entradaForm.reset();
+          entradaModal.classList.add('hidden');
+        })
+        .catch((error) => {
+          alert('Erro ao cadastrar entrada: ' + error.message);
+        });
+    });
+
+    // Notification popup for new saida entries
+    const notificationSound = new Audio('notification.mp3');
+    const notifiedSaidas = new Set(JSON.parse(localStorage.getItem('notifiedSaidas') || '[]'));
+
+    saidasRef.on('child_added', (snapshot) => {
+      const key = snapshot.key;
+      if (!notifiedSaidas.has(key)) {
+        notifiedSaidas.add(key);
+        localStorage.setItem('notifiedSaidas', JSON.stringify(Array.from(notifiedSaidas)));
+        const saida = snapshot.val();
+        if (saida) showPopup(saida.modelo || 'Modelo não informado');
+      }
+    });
+
+    function showPopup(modelo) {
+      const popup = document.createElement('div');
+      popup.className = 'fixed top-16 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg flex items-center space-x-2';
+      popup.innerHTML = `<i class="fas fa-info-circle text-xl"></i><span>Nova saída registrada: ${modelo}</span>`;
+      document.body.appendChild(popup);
+      notificationSound.play();
+      setTimeout(() => popup.remove(), 5000);
+    }
+  </script>
+
+  <script>
+    // Toggle user submenu visibility on click
+    document.getElementById('userMenu').addEventListener('click', function(event) {
+      event.stopPropagation();
+      const submenu = document.getElementById('userSubmenu');
+      submenu.classList.toggle('hidden');
+    });
+
+    // Hide submenu if clicking outside
+    document.addEventListener('click', function() {
+      const submenu = document.getElementById('userSubmenu');
+      if (!submenu.classList.contains('hidden')) {
+        submenu.classList.add('hidden');
+      }
+    });
+  </script>
+ </body>
+</html>
