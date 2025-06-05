@@ -15,10 +15,14 @@
   <!-- Container principal (Sidebar + Conteúdo) -->
   <div class="flex flex-1 relative">
     
-    <!-- Sidebar -->
-    <div id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-blue-500 p-4 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:w-1/6">
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-blue-500 p-4 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40">
       <h2 class="text-white text-xl font-semibold mb-6 border-b border-blue-400 pb-2">Menu Principal</h2>
-      <nav class="flex flex-col space-y-3 flex-grow">
+      <nav class="flex flex-col space-y-3 flex-grow overflow-y-auto">
+        <a href="paginaprincipal.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-home text-lg mr-3"></i>
+          <span>Tela Inicial</span>
+        </a>
         <a href="saidaaparelho.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
           <i class="fas fa-sign-in-alt text-lg mr-3"></i>
           <span>Entrada de celular</span>
@@ -43,13 +47,18 @@
           <i class="fas fa-building text-lg mr-3"></i>
           <span>Cadastrar Empresa</span>
         </a>
+        <a href="garantia.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-shield-alt text-lg mr-3"></i>
+          <span>Gerar Garantia</span>
+        </a>
         <a href="estoque.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
           <i class="fas fa-cog text-lg mr-3"></i>
           <span>Estoque de peças</span>
         </a>
-        <a href="garantia.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
-          <i class="fas fa-shield-alt text-lg mr-3"></i>
-          <span>Gerar Garantia</span>
+        <!-- Nova opção de Fluxo de Caixa -->
+        <a href="fluxocaixa.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
+          <i class="fas fa-cash-register text-lg mr-3"></i>
+          <span>Fluxo de Caixa</span>
         </a>
         <div class="border-t border-blue-400 my-4"></div>
         <a href="historicodesaidas.html" class="bg-blue-400 hover:bg-blue-600 text-white py-2 rounded-md flex items-center px-3">
@@ -64,7 +73,7 @@
     </div>
 
     <!-- Conteúdo principal -->
-    <div class="w-full md:w-5/6 p-4">
+    <div class="w-full md:w-5/6 md:ml-64 p-4">
       <div class="flex items-center mb-4 justify-center relative">
         <button id="menuToggle" class="md:hidden text-blue-500 focus:outline-none absolute left-0">
           <i class="fas fa-bars text-3xl"></i>
@@ -114,11 +123,73 @@
 
   <!-- Rodapé -->
 
+  <style>
+    /* Popup fade-in and fade-out animations */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    @keyframes fadeOut {
+      from {opacity: 1;}
+      to {opacity: 0;}
+    }
+    #popupModal {
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+    }
+    #popupModal.show {
+      display: flex !important;
+      animation-name: fadeIn;
+    }
+    #popupModal.hide {
+      animation-name: fadeOut;
+    }
+  </style>
+
+  <div id="popupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="popupTitle" aria-describedby="popupDesc">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative mx-4">
+      <button id="closePopup" aria-label="Fechar popup" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">&times;</button>
+      <img src="logoprincipal.png" alt="Nova Atualização" class="mx-auto mb-4 w-32 h-auto"/>
+      <h2 id="popupTitle" class="text-xl font-bold text-center mb-2">Nova Atualização</h2>
+      <p id="popupDesc" class="text-center text-gray-700">Fluxo de caixa, gerencie entradas e saidas do caixa</p>
+    </div>
+  </div>
+
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
 
   <audio id="notificationSound" src="notification.mp3" preload="auto"></audio>
 
   <script>
+    // Popup modal show once logic with fade animations
+    document.addEventListener('DOMContentLoaded', () => {
+      const popupModal = document.getElementById('popupModal');
+      const closePopup = document.getElementById('closePopup');
+      const popupShown = localStorage.getItem('popupShown');
+
+      function showPopup() {
+        popupModal.classList.remove('hidden', 'hide');
+        popupModal.classList.add('show');
+      }
+
+      function hidePopup() {
+        popupModal.classList.remove('show');
+        popupModal.classList.add('hide');
+        popupModal.addEventListener('animationend', () => {
+          popupModal.classList.add('hidden');
+          popupModal.classList.remove('hide');
+        }, { once: true });
+      }
+
+      if (!popupShown) {
+        showPopup();
+        localStorage.setItem('popupShown', 'true');
+      }
+
+      closePopup.addEventListener('click', () => {
+        hidePopup();
+      });
+    });
+
     const firebaseConfig = {
       apiKey: "AIzaSyDtjLXUzzkqrbaTEpnp3V3E9-TieWpfUbI",
       authDomain: "e-celldb.firebaseapp.com",
